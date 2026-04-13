@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZABU – Get Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#ff2d2d;--red2:#cc1a1a;
+  --bg:#060608;--s1:#0e0e12;--s2:#16161c;
+  --border:#ffffff0f;--border2:#ffffff18;
+  --text:#f2f2f5;--muted:#6b6b7a;--muted2:#9898a8;
+  --green:#22c55e;--green-bg:#052e1680;
+}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px;
+  background-image:radial-gradient(ellipse 80% 50% at 50% -10%,#ff2d2d14,transparent);
+}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:clamp(44px,10vw,64px);font-weight:900;letter-spacing:8px;color:var(--red);text-shadow:0 0 40px #ff2d2d40;margin-bottom:2px}
+.tagline{color:var(--muted);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:36px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:clamp(24px,5vw,40px);width:100%;max-width:440px;box-shadow:0 32px 64px #00000060}
+
+.price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:24px}
+.price-num{font-family:'Barlow Condensed',sans-serif;font-size:clamp(48px,12vw,64px);font-weight:900;color:var(--red);line-height:1}
+.price-meta{color:var(--muted);font-size:13px;line-height:1.5}
+.price-meta b{color:var(--muted2);display:block}
+
+.steps{background:var(--s2);border-radius:12px;padding:4px 0;margin-bottom:24px;border:1px solid var(--border)}
+.step{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-n{background:var(--red);color:#fff;font-size:11px;font-weight:700;min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-t{font-size:13px;color:var(--muted2);line-height:1.6}
+.step-t b{color:var(--text)}
+.momo{display:inline-block;margin-top:6px;background:var(--bg);border:1px dashed var(--red);border-radius:8px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:3px;color:var(--text)}
+
+.divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.field{margin-bottom:14px}
+label{display:block;font-size:11px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+input{width:100%;padding:13px 16px;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus{border-color:var(--red);box-shadow:0 0 0 3px #ff2d2d15}
+input::placeholder{color:var(--muted)}
+.btn{width:100%;padding:15px;background:var(--red);border:none;border-radius:10px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:background .2s,transform .1s,box-shadow .2s;box-shadow:0 4px 20px #ff2d2d40;margin-top:4px}
+.btn:hover{background:var(--red2);box-shadow:0 4px 28px #ff2d2d60}
+.btn:active{transform:scale(.98)}
+.btn:disabled{background:#2a2a2a;color:#555;box-shadow:none;cursor:not-allowed}
+.err{color:var(--red);font-size:13px;margin-top:10px;text-align:center}
+
+/* WAITING STATE */
+.waiting{display:none;text-align:center;padding:8px 0}
+.waiting.show{display:block}
+.pulse-ring{
+  width:64px;height:64px;border-radius:50%;
+  border:3px solid var(--red);
+  margin:0 auto 16px;
+  animation:pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.12);opacity:.6}
+  100%{transform:scale(1);opacity:1}
+}
+.wait-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:8px}
+.wait-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:16px}
+.wait-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin:0 3px;animation:dot 1.4s ease-in-out infinite}
+.wait-dots span:nth-child(2){animation-delay:.2s}
+.wait-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,80%,100%{transform:scale(1);opacity:.4}40%{transform:scale(1.4);opacity:1}}
+
+/* CODE REVEALED */
+.code-reveal{display:none;text-align:center}
+.code-reveal.show{display:block;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.suc-title{color:var(--green);font-family:'Barlow Condensed',sans-serif;font-size:24px;letter-spacing:1px;margin-bottom:6px}
+.suc-sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+.code-box{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(32px,9vw,44px);font-weight:700;
+  letter-spacing:6px;color:var(--green);
+  background:var(--green-bg);border:1px solid #22c55e40;
+  border-radius:12px;padding:18px;margin-bottom:10px;
+  user-select:all;cursor:copy;
+}
+.code-box:active{opacity:.8}
+.code-hint{color:var(--muted);font-size:12px;margin-bottom:20px}
+.btn-enter{
+  width:100%;padding:15px;background:var(--green);border:none;
+  border-radius:10px;color:#000;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:700;letter-spacing:2px;
+  cursor:pointer;transition:opacity .2s;
+}
+.btn-enter:hover{opacity:.9}
+
+.back{display:block;text-align:center;margin-top:24px;color:var(--muted);font-size:13px;text-decoration:none}
+.back:hover{color:var(--text)}
+</style>
+</head>
+<body>
+<div class="logo">ZABU</div>
+<div class="tagline">Pay Once · Watch For 24 Hours</div>
+
+<div class="card">
+  <div class="price-row">
+    <span class="price-num">500</span>
+    <span class="price-meta"><b>UGX</b>24-hour access</span>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-t">
+        Send <b>500 UGX</b> via Mobile Money to:<br>
+        <span class="momo">0700 000 000</span><br>
+        <span style="color:var(--muted);font-size:12px;margin-top:4px;display:block">MTN or Airtel accepted</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-t">Enter your <b>phone number</b> and the <b>transaction ID</b> from your MoMo message below</div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-t">Your <b>access code appears automatically</b> on this page once admin confirms your payment</div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div id="formSection">
+    <div class="divider">Submit Your Payment</div>
+    <div class="field">
+      <label>Your Phone Number</label>
+      <input type="tel" id="phone" placeholder="e.g. 0700123456">
+    </div>
+    <div class="field">
+      <label>Transaction ID / MoMo Reference</label>
+      <input type="text" id="tx" placeholder="e.g. ABC123456789" autocapitalize="characters">
+    </div>
+    <button class="btn" id="submitBtn" onclick="submitPayment(event)">📤 SUBMIT PAYMENT</button>
+    <div class="err" id="errMsg"></div>
+  </div>
+
+  <!-- WAITING (shown after submit, polls for approval) -->
+  <div class="waiting" id="waitingSection">
+    <div class="pulse-ring"></div>
+    <div class="wait-title">Payment Submitted!</div>
+    <div class="wait-sub">
+      Keep this page open.<br>
+      Your code will appear <b style="color:var(--text)">automatically</b> the moment admin approves your payment.
+    </div>
+    <div class="wait-dots"><span></span><span></span><span></span></div>
+  </div>
+
+  <!-- CODE REVEALED (shown when approved) -->
+  <div class="code-reveal" id="codeSection">
+    <div class="suc-title">✅ PAYMENT APPROVED!</div>
+    <div class="suc-sub">Your access code is:</div>
+    <div class="code-box" id="codeBox" title="Tap to copy"></div>
+    <div class="code-hint">📸 Screenshot this! You'll need it to log in next time.</div>
+    <button class="btn-enter" onclick="enterNow()">🎬 ENTER ZABU NOW</button>
+  </div>
+</div>
+
+<a class="back" href="gate.html">← Already have a code?</a>
+
+<script>
+let pollInterval = null;
+let submittedPhone = "";
+let submittedTx = "";
+
+async function submitPayment(e) {
+  if (e) e.preventDefault();
+  const phone  = document.getElementById("phone").value.trim();
+  const tx_ref = document.getElementById("tx").value.trim();
+  const err    = document.getElementById("errMsg");
+  const btn    = document.getElementById("submitBtn");
+
+  err.innerText = "";
+  if (!phone || !tx_ref) { err.innerText = "Please fill in both fields"; return; }
+
+  btn.disabled = true;
+  btn.innerText = "Submitting...";
+
+  try {
+    const r = await fetch("/submit-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, tx_ref })
+    });
+    const d = await r.json();
+
+    if (r.ok && d.ok) {
+      // Save for polling
+      submittedPhone = phone;
+      submittedTx    = tx_ref;
+
+      // Switch to waiting state
+      document.getElementById("formSection").style.display = "none";
+      document.getElementById("waitingSection").classList.add("show");
+
+      // Start polling every 5 seconds
+      pollInterval = setInterval(checkApproval, 5000);
+
+    } else {
+      err.innerText = "❌ " + (d.message || "Something went wrong");
+      btn.disabled  = false;
+      btn.innerText = "📤 SUBMIT PAYMENT";
+    }
+  } catch {
+    err.innerText = "Cannot connect to server. Is it running?";
+    btn.disabled  = false;
+    btn.innerText = "📤 SUBMIT PAYMENT";
+  }
+}
+
+async function checkApproval() {
+  try {
+    const r = await fetch(
+      "/check-payment?phone=" + encodeURIComponent(submittedPhone) +
+      "&tx_ref=" + encodeURIComponent(submittedTx)
+    );
+    const d = await r.json();
+
+    if (d.ok && d.status === "approved" && d.code) {
+      // Stop polling
+      clearInterval(pollInterval);
+
+      // Show the code
+      document.getElementById("waitingSection").classList.remove("show");
+      document.getElementById("codeBox").innerText = d.code;
+      document.getElementById("codeSection").classList.add("show");
+
+      // Save code for auto-login
+      sessionStorage.setItem("zabu_code", d.code);
+    }
+    // If still pending — keep polling
+  } catch {
+    // Network hiccup — keep polling silently
+  }
+}
+
+async function enterNow() {
+  const code = document.getElementById("codeBox").innerText ||
+               sessionStorage.getItem("zabu_code");
+  if (!code) { location.href = "gate.html"; return; }
+
+  try {
+    const r = await fetch("/verify-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code })
+    });
+    const d = await r.json();
+    if (r.ok && d.token) {
+      localStorage.setItem("zabu_token", d.token);
+      sessionStorage.removeItem("zabu_code");
+      location.href = "index.html";
+    } else {
+      location.href = "gate.html";
+    }
+  } catch {
+    location.href = "gate.html";
+  }
+}
+</script>
+</body>
+</html>

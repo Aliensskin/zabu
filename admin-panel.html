@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZABU – Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#ff2d2d;--red2:#cc1a1a;
+  --bg:#060608;--s1:#0e0e12;--s2:#16161c;--s3:#1e1e26;
+  --border:#ffffff0a;--border2:#ffffff14;
+  --text:#f2f2f5;--muted:#6b6b7a;--muted2:#9898a8;
+  --green:#22c55e;--orange:#f97316;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+nav{
+  background:var(--s1);border-bottom:1px solid var(--border2);
+  padding:0 24px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:5px;color:var(--red)}
+.nav-r{display:flex;align-items:center;gap:10px}
+.nav-tag{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.btn-xs{
+  padding:6px 14px;background:transparent;border:1px solid var(--border2);
+  border-radius:8px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;
+  cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;
+  transition:all .2s;
+}
+.btn-xs:hover{border-color:var(--red);color:var(--red)}
+
+main{max-width:1000px;margin:0 auto;padding:32px 20px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px;margin-bottom:36px}
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center}
+.stat-n{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:700;line-height:1;color:var(--red)}
+.stat-n.g{color:var(--green)}.stat-n.o{color:var(--orange)}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+
+/* SECTION */
+.section{margin-bottom:36px}
+.sec-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border2);
+}
+.sec-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:16px;font-weight:700;letter-spacing:2px;color:var(--muted2);
+}
+
+/* BOX */
+.box{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:24px}
+.box-desc{color:var(--muted);font-size:13px;margin-bottom:18px;line-height:1.6}
+
+/* UPLOAD */
+.upload-row{display:flex;gap:10px;flex-wrap:wrap}
+input[type="file"]{
+  flex:1;min-width:0;padding:11px 14px;
+  background:var(--s2);border:1px solid var(--border2);
+  border-radius:10px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:13px;
+}
+.prog-wrap{height:4px;background:var(--s3);border-radius:2px;margin-top:14px;display:none}
+.prog-bar{height:100%;background:var(--red);border-radius:2px;width:0;transition:width .2s}
+.status{font-size:13px;margin-top:10px;min-height:18px}
+
+/* BUTTONS */
+.btn-red{
+  padding:11px 22px;background:var(--red);border:none;border-radius:10px;
+  color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;
+  letter-spacing:1px;cursor:pointer;transition:background .2s,box-shadow .2s;
+  white-space:nowrap;box-shadow:0 4px 16px #ff2d2d30;
+}
+.btn-red:hover{background:var(--red2);box-shadow:0 4px 20px #ff2d2d50}
+.btn-red:disabled{background:#2a2a2a;color:#555;box-shadow:none;cursor:not-allowed}
+
+/* CODE RESULT */
+.gen-result{margin-top:16px}
+.gen-code{
+  font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;
+  letter-spacing:4px;color:var(--green);
+}
+
+/* PAYMENTS */
+.pcard{
+  background:var(--s1);border:1px solid var(--border);border-radius:12px;
+  padding:16px 20px;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+  transition:border-color .2s;
+}
+.pcard:hover{border-color:var(--border2)}
+.pinfo{flex:1;min-width:160px}
+.p-phone{font-size:15px;font-weight:500}
+.p-ref{color:var(--muted);font-size:12px;font-family:monospace;margin-top:2px}
+.p-time{color:#3a3a4a;font-size:11px;margin-top:4px}
+.pactions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.b-p{background:rgba(249,115,22,.1);color:var(--orange);border:1px solid rgba(249,115,22,.25)}
+.b-a{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.b-r{background:rgba(255,45,45,.1);color:var(--red);border:1px solid rgba(255,45,45,.2)}
+.code-tag{font-family:monospace;font-size:12px;background:var(--s2);color:var(--green);padding:3px 10px;border-radius:6px;letter-spacing:1px}
+.btn-ap{
+  padding:7px 16px;background:rgba(34,197,94,.12);
+  border:1px solid rgba(34,197,94,.35);border-radius:8px;
+  color:var(--green);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:background .2s;
+}
+.btn-ap:hover{background:rgba(34,197,94,.25)}
+.btn-rj{
+  padding:7px 14px;background:transparent;border:1px solid var(--border2);
+  border-radius:8px;color:var(--muted);font-family:'DM Sans',sans-serif;
+  font-size:13px;cursor:pointer;transition:all .2s;
+}
+.btn-rj:hover{border-color:var(--red);color:var(--red)}
+
+/* VIDEO MANAGEMENT */
+.vcard{
+  display:flex;align-items:center;gap:14px;
+  background:var(--s1);border:1px solid var(--border);border-radius:12px;
+  padding:14px 16px;margin-bottom:10px;
+}
+.vthumb{width:64px;height:40px;background:#000;border-radius:6px;overflow:hidden;flex-shrink:0}
+.vthumb video{width:100%;height:100%;object-fit:cover}
+.vname{flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-del{
+  padding:7px 14px;background:rgba(255,45,45,.08);
+  border:1px solid rgba(255,45,45,.2);border-radius:8px;
+  color:var(--red);font-family:'DM Sans',sans-serif;font-size:13px;
+  cursor:pointer;flex-shrink:0;transition:background .2s;
+}
+.btn-del:hover{background:rgba(255,45,45,.2)}
+
+.empty{text-align:center;color:#2a2a3a;padding:32px;font-size:14px}
+.refresh-btn{
+  padding:6px 14px;background:transparent;border:1px solid var(--border2);
+  border-radius:8px;color:var(--muted);font-family:'DM Sans',sans-serif;
+  font-size:12px;cursor:pointer;transition:all .2s;
+}
+.refresh-btn:hover{color:var(--text);border-color:#333}
+
+@media(max-width:520px){
+  nav{padding:0 16px}
+  .nav-tag{display:none}
+  main{padding:20px 14px}
+  .upload-row{flex-direction:column}
+  .btn-red{width:100%}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">ZABU</div>
+  <div class="nav-r">
+    <span class="nav-tag">Admin Panel</span>
+    <a class="btn-xs" href="index.html" target="_blank">View Site ↗</a>
+    <button class="btn-xs" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<main>
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-n o" id="sP">–</div><div class="stat-l">Pending</div></div>
+    <div class="stat"><div class="stat-n g" id="sA">–</div><div class="stat-l">Approved</div></div>
+    <div class="stat"><div class="stat-n" id="sR">–</div><div class="stat-l">Rejected</div></div>
+    <div class="stat"><div class="stat-n" id="sT">–</div><div class="stat-l">Total Payments</div></div>
+    <div class="stat"><div class="stat-n g" id="sV">–</div><div class="stat-l">Videos</div></div>
+  </div>
+
+  <!-- Upload -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-title">⬆ UPLOAD VIDEO</div></div>
+    <div class="box">
+      <div class="box-desc">Upload videos for paying visitors to watch and download. Supports MP4, MOV, AVI and other formats. Max 2GB per file.</div>
+      <div class="upload-row">
+        <input type="file" id="vFile" accept="video/*">
+        <button class="btn-red" id="upBtn" onclick="uploadVideo()">Upload</button>
+      </div>
+      <div class="prog-wrap" id="progWrap"><div class="prog-bar" id="progBar"></div></div>
+      <div class="status" id="upStatus"></div>
+    </div>
+  </div>
+
+  <!-- Videos -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-title">🎬 MANAGE VIDEOS</div>
+      <button class="refresh-btn" onclick="loadVideos()">🔄 Refresh</button>
+    </div>
+    <div id="videoList"></div>
+  </div>
+
+  <!-- Code Generator -->
+  <div class="section">
+    <div class="sec-head"><div class="sec-title">🎟 GENERATE ACCESS CODE</div></div>
+    <div class="box">
+      <div class="box-desc">Instantly create an access code to give someone free access (testing, gifts, promotions).</div>
+      <button class="btn-red" onclick="genCode()">Generate Code</button>
+      <div class="gen-result" id="genResult"></div>
+    </div>
+  </div>
+
+  <!-- Payments -->
+  <div class="section">
+    <div class="sec-head">
+      <div class="sec-title">💰 PAYMENTS</div>
+      <button class="refresh-btn" onclick="loadPayments()">🔄 Refresh</button>
+    </div>
+    <div id="payList"></div>
+  </div>
+</main>
+
+<script>
+const ADMIN_SECRET="zabu-admin-secret-2024";
+if(localStorage.getItem("zabu_admin")!=="true")location.href="admin.html";
+
+function logout(){localStorage.removeItem("zabu_admin");location.href="admin.html"}
+
+function timeAgo(d){
+  const m=Math.floor((Date.now()-new Date(d))/60000);
+  if(m<1)return"just now";if(m<60)return m+"m ago";
+  const h=Math.floor(m/60);if(h<24)return h+"h ago";
+  return Math.floor(h/24)+"d ago";
+}
+
+/* ── UPLOAD ── */
+async function uploadVideo(){
+  const fi=document.getElementById("vFile");
+  const st=document.getElementById("upStatus");
+  const btn=document.getElementById("upBtn");
+  const pw=document.getElementById("progWrap");
+  const pb=document.getElementById("progBar");
+  if(!fi.files[0]){st.style.color="var(--red)";st.innerText="⚠ Select a video file first";return}
+  const file=fi.files[0];
+  btn.disabled=true;btn.innerText="Uploading...";
+  st.style.color="var(--muted)";st.innerText="Starting upload...";
+  pw.style.display="block";pb.style.width="0%";
+  const fd=new FormData();fd.append("video",file);
+  const xhr=new XMLHttpRequest();
+  xhr.upload.onprogress=e=>{
+    if(e.lengthComputable){
+      const p=Math.round(e.loaded/e.total*100);
+      pb.style.width=p+"%";
+      st.innerText="Uploading "+file.name+" — "+p+"%";
+    }
+  };
+  xhr.onload=()=>{
+    pb.style.width="100%";
+    try{
+      const d=JSON.parse(xhr.responseText);
+      if(xhr.status===200&&d.ok){
+        st.style.color="var(--green)";
+        st.innerText="✅ "+file.name+" uploaded! Visitors can watch it now.";
+        fi.value="";
+        setTimeout(()=>{pw.style.display="none";st.innerText="";pb.style.width="0%"},5000);
+        loadVideos();loadPayments();
+      }else{
+        st.style.color="var(--red)";
+        st.innerText="❌ "+(d.message||"Upload failed ("+xhr.status+")");
+        pw.style.display="none";
+      }
+    }catch{
+      st.style.color="var(--red)";st.innerText="❌ Unexpected server error";pw.style.display="none";
+    }
+    btn.disabled=false;btn.innerText="Upload";
+  };
+  xhr.onerror=()=>{
+    st.style.color="var(--red)";st.innerText="❌ Cannot reach server. Is node server.js running?";
+    pw.style.display="none";btn.disabled=false;btn.innerText="Upload";
+  };
+  xhr.open("POST","/upload");
+  xhr.setRequestHeader("x-admin-secret",ADMIN_SECRET);
+  xhr.send(fd);
+}
+
+/* ── VIDEOS ── */
+async function loadVideos(){
+  const list=document.getElementById("videoList");
+  try{
+    const r=await fetch("/videos-list");
+    const d=await r.json();
+    const videos=d.videos||[];
+    document.getElementById("sV").innerText=videos.length;
+    if(!videos.length){list.innerHTML='<div class="empty">No videos uploaded yet</div>';return}
+    list.innerHTML=videos.map(v=>{
+      const name=v.filename.replace(/^\d{13,14}-/,"");
+      return`<div class="vcard">
+        <div class="vthumb">
+          <video preload="metadata" muted>
+            <source src="/videos/${encodeURIComponent(v.filename)}" type="video/mp4">
+          </video>
+        </div>
+        <div class="vname" title="${name}">${name}</div>
+        <button class="btn-del" onclick="deleteVideo('${v.filename}')">🗑 Delete</button>
+      </div>`;
+    }).join("");
+  }catch{
+    list.innerHTML='<div class="empty" style="color:var(--red)">Could not load videos</div>';
+  }
+}
+
+async function deleteVideo(filename){
+  if(!confirm('Delete "'+filename.replace(/^\d{13,14}-/,"")+'"?'))return;
+  try{
+    const r=await fetch("/delete/"+encodeURIComponent(filename),{
+      method:"DELETE",headers:{"x-admin-secret":ADMIN_SECRET}
+    });
+    const d=await r.json();
+    if(d.ok)loadVideos();
+    else alert("Delete failed: "+(d.message||"Unknown error"));
+  }catch{alert("Server error")}
+}
+
+/* ── CODE GEN ── */
+async function genCode(){
+  const el=document.getElementById("genResult");
+  el.innerHTML='<span style="color:var(--muted)">Generating...</span>';
+  try{
+    const r=await fetch("/generate-manual-code",{
+      method:"POST",headers:{"x-admin-secret":ADMIN_SECRET}
+    });
+    const d=await r.json();
+    if(d.ok){
+      el.innerHTML=`<div style="margin-top:6px">
+        Code: <span class="gen-code">${d.code}</span>
+        <span style="color:var(--muted);font-size:12px;margin-left:10px">— copy & share with user</span>
+      </div>`;
+    }else{
+      el.innerHTML='<span style="color:var(--red)">'+(d.message||"Error")+'</span>';
+    }
+  }catch{el.innerHTML='<span style="color:var(--red)">Server error</span>'}
+}
+
+/* ── PAYMENTS ── */
+async function loadPayments(){
+  const list=document.getElementById("payList");
+  try{
+    const r=await fetch("/payments",{headers:{"x-admin-secret":ADMIN_SECRET}});
+    const d=await r.json();
+    const payments=d.payments||[];
+    document.getElementById("sP").innerText=payments.filter(p=>p.status==="pending").length;
+    document.getElementById("sA").innerText=payments.filter(p=>p.status==="approved").length;
+    document.getElementById("sR").innerText=payments.filter(p=>p.status==="rejected").length;
+    document.getElementById("sT").innerText=payments.length;
+    if(!payments.length){list.innerHTML='<div class="empty">No payments yet</div>';return}
+    list.innerHTML=payments.map(p=>`
+      <div class="pcard">
+        <div class="pinfo">
+          <div class="p-phone">📱 ${p.phone||"—"}</div>
+          <div class="p-ref">Ref: ${p.tx_ref||"—"}</div>
+          <div class="p-time">${timeAgo(p.created_at)}</div>
+        </div>
+        <div class="pactions">
+          ${p.status==="pending"?`
+            <button class="btn-ap" onclick="approve(${p.id})">✅ Approve</button>
+            <button class="btn-rj" onclick="reject(${p.id})">Reject</button>
+          `:""}
+          ${p.status==="approved"?`
+            <span class="badge b-a">✅ Approved</span>
+            ${p.code?`<span class="code-tag">${p.code}</span>`:""}
+          `:""}
+          ${p.status==="rejected"?`<span class="badge b-r">Rejected</span>`:""}
+        </div>
+      </div>
+    `).join("");
+  }catch{
+    list.innerHTML='<div class="empty" style="color:var(--red)">Could not load payments. Is the server running?</div>';
+  }
+}
+
+async function approve(id){
+  const r=await fetch("/approve-payment/"+id,{method:"POST",headers:{"x-admin-secret":ADMIN_SECRET}});
+  const d=await r.json();
+  if(d.ok&&d.code)alert("✅ Approved!\n\nAccess Code: "+d.code+"\n\nShare this with the user.");
+  loadPayments();
+}
+async function reject(id){
+  if(!confirm("Reject this payment?"))return;
+  await fetch("/reject-payment/"+id,{method:"POST",headers:{"x-admin-secret":ADMIN_SECRET}});
+  loadPayments();
+}
+
+// Init
+loadVideos();
+loadPayments();
+setInterval(loadPayments,30000);
+</script>
+</body>
+</html>

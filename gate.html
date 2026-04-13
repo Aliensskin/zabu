@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZABU – Enter</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#ff2d2d;--red2:#cc1a1a;
+  --bg:#060608;--s1:#0e0e12;--s2:#16161c;--s3:#1e1e26;
+  --border:#ffffff0f;--border2:#ffffff18;
+  --text:#f2f2f5;--muted:#6b6b7a;--muted2:#9898a8;
+  --green:#22c55e;--green-bg:#052e1680;
+}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:24px;min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%,#ff2d2d14,transparent),
+    radial-gradient(ellipse 40% 40% at 80% 80%,#ff2d2d08,transparent);
+}
+.logo{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(52px,12vw,80px);font-weight:900;
+  letter-spacing:8px;color:var(--red);
+  margin-bottom:2px;text-align:center;
+  text-shadow:0 0 60px #ff2d2d40;
+  animation:fadeDown .6s ease both;
+}
+.tagline{
+  color:var(--muted);font-size:11px;letter-spacing:4px;
+  text-transform:uppercase;margin-bottom:40px;text-align:center;
+  animation:fadeDown .6s .1s ease both;
+}
+.card{
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:20px;padding:clamp(28px,6vw,44px);
+  width:100%;max-width:400px;
+  box-shadow:0 32px 64px #00000060;
+  animation:fadeUp .6s .15s ease both;
+}
+.card-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:700;letter-spacing:1px;
+  margin-bottom:4px;
+}
+.card-sub{color:var(--muted);font-size:13px;margin-bottom:28px;line-height:1.5}
+label{
+  display:block;font-size:11px;font-weight:600;
+  color:var(--muted2);text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:8px;
+}
+input{
+  width:100%;padding:14px 16px;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);
+  font-family:'DM Sans',sans-serif;font-size:16px;
+  letter-spacing:2px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  margin-bottom:16px;
+}
+input:focus{border-color:var(--red);box-shadow:0 0 0 3px #ff2d2d15}
+input::placeholder{color:var(--muted);letter-spacing:0;font-size:14px}
+.btn{
+  width:100%;padding:15px;background:var(--red);
+  border:none;border-radius:10px;color:#fff;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px;font-weight:700;letter-spacing:2px;
+  cursor:pointer;transition:background .2s,transform .1s,box-shadow .2s;
+  box-shadow:0 4px 20px #ff2d2d40;
+}
+.btn:hover{background:var(--red2);box-shadow:0 4px 28px #ff2d2d60}
+.btn:active{transform:scale(.98)}
+.msg{margin-top:14px;font-size:13px;text-align:center;min-height:18px}
+.err{color:var(--red)}.suc{color:var(--green)}
+.divider{
+  display:flex;align-items:center;gap:12px;
+  margin:24px 0;color:var(--muted);font-size:12px;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.pay-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px;background:transparent;
+  border:1px solid var(--border2);border-radius:10px;
+  color:var(--muted2);font-family:'DM Sans',sans-serif;
+  font-size:14px;font-weight:500;text-decoration:none;
+  transition:border-color .2s,color .2s,background .2s;
+}
+.pay-btn:hover{border-color:var(--red);color:var(--text);background:#ff2d2d08}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="logo">ZABU</div>
+<div class="tagline">Members Only · Exclusive Access</div>
+<div class="card">
+  <div class="card-title">🔐 Enter Access Code</div>
+  <div class="card-sub">Enter the code you received after making your payment</div>
+  <label>Your Access Code</label>
+  <input type="text" id="code" placeholder="ZABU-XXXXX" autocomplete="off" autocapitalize="characters"
+    onkeydown="if(event.key==='Enter')verifyCode()">
+  <button class="btn" onclick="verifyCode()">ENTER ZABU →</button>
+  <div class="msg" id="msg"></div>
+  <div class="divider">Don't have a code?</div>
+  <a class="pay-btn" href="payment.html">💳 Pay 500 UGX – Get Instant Access</a>
+</div>
+
+<script>
+const API="";
+if(localStorage.getItem("zabu_token"))location.href="index.html";
+
+async function verifyCode(){
+  const code=document.getElementById("code").value.trim().toUpperCase();
+  const msg=document.getElementById("msg");
+  if(!code){msg.innerHTML='<span class="err">Please enter your code</span>';return}
+  msg.innerHTML='<span style="color:var(--muted)">Verifying...</span>';
+  try{
+    const r=await fetch("/verify-code",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({code})
+    });
+    const d=await r.json();
+    if(r.ok&&d.token){
+      localStorage.setItem("zabu_token",d.token);
+      msg.innerHTML='<span class="suc">✅ Access granted! Loading...</span>';
+      setTimeout(()=>location.href="index.html",700);
+    }else{
+      msg.innerHTML='<span class="err">❌ '+(d.message||"Invalid code")+'</span>';
+    }
+  }catch{
+    msg.innerHTML='<span class="err">Cannot connect to server</span>';
+  }
+}
+</script>
+</body>
+</html>

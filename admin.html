@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZABU – Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#ff2d2d;--red2:#cc1a1a;--bg:#060608;--s1:#0e0e12;--s2:#16161c;--border:#ffffff0f;--text:#f2f2f5;--muted:#6b6b7a;--muted2:#9898a8}
+body{
+  background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px;
+  background-image:radial-gradient(ellipse 60% 50% at 50% 0%,#ff2d2d10,transparent);
+}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:clamp(48px,10vw,72px);font-weight:900;letter-spacing:8px;color:var(--red);text-shadow:0 0 40px #ff2d2d40;margin-bottom:2px}
+.sub{color:var(--muted);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:36px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:clamp(28px,6vw,44px);width:100%;max-width:380px;box-shadow:0 32px 64px #00000060}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:4px}
+.card-sub{color:var(--muted);font-size:13px;margin-bottom:28px}
+label{display:block;font-size:11px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+input{
+  width:100%;padding:14px 16px;background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;
+  outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:16px;
+}
+input:focus{border-color:var(--red);box-shadow:0 0 0 3px #ff2d2d15}
+.btn{
+  width:100%;padding:15px;background:var(--red);border:none;border-radius:10px;
+  color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;
+  letter-spacing:2px;cursor:pointer;transition:background .2s,transform .1s;
+  box-shadow:0 4px 20px #ff2d2d40;
+}
+.btn:hover{background:var(--red2)}
+.btn:active{transform:scale(.98)}
+.err{color:var(--red);font-size:13px;margin-top:10px;text-align:center}
+</style>
+</head>
+<body>
+<div class="logo">ZABU</div>
+<div class="sub">Admin Access</div>
+<div class="card">
+  <div class="card-title">🔐 Admin Login</div>
+  <div class="card-sub">Restricted — authorized personnel only</div>
+  <label>Password</label>
+  <input type="password" id="pw" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()">
+  <button class="btn" onclick="login()">LOGIN →</button>
+  <div class="err" id="err"></div>
+</div>
+<script>
+const ADMIN_PW = "MyStrongPass2024!";
+if(localStorage.getItem("zabu_admin")==="true")location.href="admin-panel.html";
+function login(){
+  const pw=document.getElementById("pw").value;
+  if(pw===ADMIN_PW){
+    localStorage.setItem("zabu_admin","true");
+    location.href="admin-panel.html";
+  }else{
+    document.getElementById("err").innerText="❌ Wrong password";
+  }
+}
+</script>
+</body>
+</html>
