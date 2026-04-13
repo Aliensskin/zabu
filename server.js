@@ -13,7 +13,7 @@ const VIDEOS_DIR = path.join(__dirname, "videos");
 if (!fs.existsSync(VIDEOS_DIR)) fs.mkdirSync(VIDEOS_DIR, { recursive: true });
 
 // Serve public HTML files
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname)));
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET || "zabu-admin-secret-2024";
 const SESSION_MS   = 24 * 60 * 60 * 1000;
