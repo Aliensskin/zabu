@@ -91,11 +91,29 @@ app.post("/upload", adminAuth, upload.single("video"), (req, res) => {
   });
 });
 
-app.get("/videos-list", visitorAuth, (req, res) => {
-  db.videos.find({}).sort({ createdAt: -1 }).exec((err, docs) => {
-    if (err) return res.status(500).json({ ok: false, message: "DB error" });
-    res.json({ ok: true, videos: docs });
-  });
+app.get("/videos-list", visitorAuth, async (req, res) => {
+  try {
+    // Fetch directly from Cloudinary — always up to date, survives server restarts
+    const result = await cloudinary.api.resources({
+      type: "upload",
+      resource_type: "video",
+      prefix: "zabu-videos/",
+      max_results: 100,
+    });
+    const videos = result.resources.map(r => ({
+      _id:      r.public_id,
+      filename: r.filename || r.public_id.replace("zabu-videos/", ""),
+      url:      r.secure_url,
+      publicId: r.public_id,
+      createdAt: r.created_at,
+    }));
+    // Sort newest first
+    videos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.json({ ok: true, videos });
+  } catch (e) {
+    console.error("Cloudinary list error:", e);
+    res.status(500).json({ ok: false, message: "Could not fetch videos" });
+  }
 });
 
 app.delete("/delete/:id", adminAuth, (req, res) => {
@@ -174,21 +192,17 @@ app.post("/approve-payment/:id", adminAuth, (req, res) => {
     { $set: { status: "approved", code: code } },
     {},
     (err) => {
-      if (err) return res.status(500).json({ ok: false, message: "Failed" });
+      if (err) return res.status(500).json({ ok: false, message: "Failed to update payment" });
 
-      // IMPORTANT: verify update actually happened
-      db.payments.findOne({ _id: req.params.id }, (err2, updated) => {
-        if (err2 || !updated) {
-          return res.status(500).json({ ok: false, message: "Update failed" });
+      // Insert code into codes table so verify-code works
+      db.codes.insert({ code, used: false, createdAt: new Date() }, (err2) => {
+        if (err2) {
+          console.error("Failed to insert code:", err2);
+          return res.status(500).json({ ok: false, message: "Failed to generate code" });
         }
 
-        console.log("APPROVED:", updated);
-
-        res.json({
-          ok: true,
-          code: updated.code,
-          status: updated.status
-        });
+        console.log("Payment approved, code:", code);
+        res.json({ ok: true, code });
       });
     }
   );
