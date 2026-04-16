@@ -5,7 +5,16 @@ const path       = require("path");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const db         = require("./db");
-
+const videos = [
+  {
+    filename: "Video 1",
+    url: "https://res.cloudinary.com/YOUR_CLOUD_NAME/video/upload/v123/video1.mp4"
+  },
+  {
+    filename: "Video 2",
+    url: "https://res.cloudinary.com/YOUR_CLOUD_NAME/video/upload/v123/video2.mp4"
+  }
+];
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -71,7 +80,32 @@ app.post("/upload", adminAuth, upload.single("video"), (req, res) => {
     res.json({ ok: true });
   });
 });
+/* ── GET VIDEOS (PROTECTED) ── */
+app.get("/videos-list", (req, res) => {
+  const token = req.headers["authorization"];
 
+  if (!token) {
+    return res.status(403).json({ ok: false });
+  }
+
+  db.sessions.findOne({ token }, (err, session) => {
+    if (err || !session) {
+      return res.status(403).json({ ok: false });
+    }
+
+    const SESSION_MS = 24 * 60 * 60 * 1000;
+    const elapsed = Date.now() - new Date(session.createdAt).getTime();
+
+    if (elapsed > SESSION_MS) {
+      return res.json({ ok: false, expired: true });
+    }
+
+    return res.json({
+      ok: true,
+      videos: videos
+    });
+  });
+});
 /* ───────────────────────── */
 /* ── PAYMENTS (FIXED) ───── */
 /* ───────────────────────── */
