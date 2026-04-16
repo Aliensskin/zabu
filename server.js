@@ -7,12 +7,25 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const db         = require("./db");
 const videos = [
   {
-    filename: "Video 1",
-    url: "https://res.cloudinary.com/YOUR_CLOUD_NAME/video/upload/v123/video1.mp4"
+    filename: "Yvonne-Nakankaka-Viral-Sextape-1",
+    url: "https://player.cloudinary.com/embed/?cloud_name=djog6tfpk&public_id=zabu-videos%2Fy1bsjhjwycloiskj2gco"
+  },
+  {
+    filename: "Jollybonney-Sextape-Coco-Leak",
+    url: "https://player.cloudinary.com/embed/?cloud_name=djog6tfpk&public_id=zabu-videos%2Fe8icbrlqnvkk69wxp4vt"
+  },
+  {
+    filename: "Busoga-School-Girl-Sextape",
+    url: "https://player.cloudinary.com/embed/?cloud_name=djog6tfpk&public_id=zabu-videos%2Fl0nnhlv61bqofjbnfrv9"
   },
   {
     filename: "Video 2",
-    url: "https://res.cloudinary.com/YOUR_CLOUD_NAME/video/upload/v123/video2.mp4"
+    url: "https://player.cloudinary.com/embed/?cloud_name=djog6tfpk&public_id=zabu-videos%2Fe8icbrlqnvkk69wxp4vt"
+  }
+  ,
+  {
+    filename: "Video 2",
+    url: "https://player.cloudinary.com/embed/?cloud_name=djog6tfpk&public_id=zabu-videos%2Fe8icbrlqnvkk69wxp4vt"
   }
 ];
 const app = express();
