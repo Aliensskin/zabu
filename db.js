@@ -1,43 +1,17 @@
-const Database = require("better-sqlite3");
-const path     = require("path");
+const Datastore = require("@seald-io/nedb");
+const path      = require("path");
 
-const db = new Database(path.join(__dirname, "zabu.db"));
+const db = {
+  videos:   new Datastore({ filename: path.join(__dirname, "data_videos.db"),   autoload: true }),
+  codes:    new Datastore({ filename: path.join(__dirname, "data_codes.db"),     autoload: true }),
+  sessions: new Datastore({ filename: path.join(__dirname, "data_sessions.db"),  autoload: true }),
+  payments: new Datastore({ filename: path.join(__dirname, "data_payments.db"),  autoload: true }),
+};
 
-// Use WAL mode for better performance
-db.pragma("journal_mode = WAL");
-
-// Create tables
-db.exec(`
-  CREATE TABLE IF NOT EXISTS videos (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    filename   TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS access_codes (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    code       TEXT UNIQUE NOT NULL,
-    used       INTEGER DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS sessions (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    token      TEXT UNIQUE NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS payments (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    phone      TEXT,
-    tx_ref     TEXT,
-    status     TEXT DEFAULT 'pending',
-    code       TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-`);
-
-// Clean expired sessions on startup
-db.prepare(`DELETE FROM sessions WHERE datetime(created_at, '+24 hours') < datetime('now')`).run();
+// Auto-cleanup expired sessions every hour
+setInterval(() => {
+  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  db.sessions.remove({ createdAt: { $lt: cutoff } }, { multi: true });
+}, 60 * 60 * 1000);
 
 module.exports = db;
