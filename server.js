@@ -137,10 +137,23 @@ app.get("/check-payment", (req, res) => {
   const { phone, tx_ref } = req.query;
   if (!phone || !tx_ref) return res.status(400).json({ ok: false });
 
-  db.payments.findOne({ phone, tx_ref }, (err, row) => {
-    if (err || !row) return res.json({ ok: false, status: "not_found" });
-    res.json({ ok: true, status: row.status, code: row.code || null });
-  });
+  db.payments
+    .find({ phone: phone, tx_ref: tx_ref })
+    .sort({ createdAt: -1 })
+    .exec((err, rows) => {
+
+      if (err || !rows || rows.length === 0) {
+        return res.json({ ok: false, status: "not_found" });
+      }
+
+      const row = rows[0]; // latest record
+
+      return res.json({
+        ok: true,
+        status: row.status,
+        code: row.code || null
+      });
+    });
 });
 
 app.get("/payments", adminAuth, (req, res) => {
@@ -152,11 +165,30 @@ app.get("/payments", adminAuth, (req, res) => {
 
 app.post("/approve-payment/:id", adminAuth, (req, res) => {
   const code = generateCode();
-  db.payments.update({ _id: req.params.id }, { $set: { status: "approved", code } }, {}, (err) => {
-    if (err) return res.status(500).json({ ok: false, message: "Failed" });
-    db.codes.insert({ code, used: false, createdAt: new Date() });
-    res.json({ ok: true, code });
-  });
+
+  db.payments.update(
+    { _id: req.params.id },
+    { $set: { status: "approved", code: code } },
+    {},
+    (err) => {
+      if (err) return res.status(500).json({ ok: false, message: "Failed" });
+
+      // FORCE FETCH UPDATED RECORD (important fix)
+      db.payments.findOne({ _id: req.params.id }, (err2, updated) => {
+        if (err2 || !updated) {
+          return res.status(500).json({ ok: false, message: "Update check failed" });
+        }
+
+        console.log("APPROVED CODE GENERATED:", updated.code);
+
+        return res.json({
+          ok: true,
+          code: updated.code,
+          status: updated.status
+        });
+      });
+    }
+  );
 });
 
 app.post("/reject-payment/:id", adminAuth, (req, res) => {
