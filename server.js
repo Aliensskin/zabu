@@ -11,7 +11,8 @@ app.use(cors());
 app.use(express.json());
 
 // Serve HTML files
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, "public")));
 
 /* ── CLOUDINARY CONFIG ── */
 cloudinary.config({
