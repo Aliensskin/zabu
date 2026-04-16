@@ -176,7 +176,7 @@ let submittedTx = "";
 async function submitPayment(e) {
   if (e) e.preventDefault();
   const phone  = document.getElementById("phone").value.trim();
-  const tx_ref = document.getElementById("tx").value.trim();
+  const tx_ref = document.getElementById("tx").value.trim().toUpperCase();
   const err    = document.getElementById("errMsg");
   const btn    = document.getElementById("submitBtn");
 
