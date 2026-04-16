@@ -289,15 +289,17 @@ async function loadVideos(){
     document.getElementById("sV").innerText=videos.length;
     if(!videos.length){list.innerHTML='<div class="empty">No videos uploaded yet</div>';return}
     list.innerHTML=videos.map(v=>{
-      const name=v.filename.replace(/^\d{13,14}-/,"");
+      const name = v.filename || "Video";
+      const url  = v.url || "";
+      const id   = v._id;
       return`<div class="vcard">
         <div class="vthumb">
           <video preload="metadata" muted>
-            <source src="/videos/${encodeURIComponent(v.filename)}" type="video/mp4">
+            <source src="${url}" type="video/mp4">
           </video>
         </div>
         <div class="vname" title="${name}">${name}</div>
-        <button class="btn-del" onclick="deleteVideo('${v.filename}')">🗑 Delete</button>
+        <button class="btn-del" onclick="deleteVideo('${id}')">🗑 Delete</button>
       </div>`;
     }).join("");
   }catch{
@@ -305,10 +307,10 @@ async function loadVideos(){
   }
 }
 
-async function deleteVideo(filename){
-  if(!confirm('Delete "'+filename.replace(/^\d{13,14}-/,"")+'"?'))return;
+async function deleteVideo(id){
+  if(!confirm("Delete this video?"))return;
   try{
-    const r=await fetch("/delete/"+encodeURIComponent(filename),{
+    const r=await fetch("/delete/"+encodeURIComponent(id),{
       method:"DELETE",headers:{"x-admin-secret":ADMIN_SECRET}
     });
     const d=await r.json();

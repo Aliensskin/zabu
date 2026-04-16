@@ -227,19 +227,20 @@ async function loadVideos(){
       return;
     }
     videos.forEach(v=>{
-      const name=v.filename.replace(/^\d{13,14}-/,"");
+      const name = v.filename || "Video";
+      const url  = v.url;
       const card=document.createElement("div");
       card.className="card";
       card.innerHTML=`
         <div class="video-wrap">
           <video controls preload="metadata" playsinline>
-            <source src="/videos/${encodeURIComponent(v.filename)}" type="video/mp4">
+            <source src="${url}" type="video/mp4">
           </video>
         </div>
         <div class="card-body">
           <div class="vid-name" title="${name}">${name}</div>
           <div class="card-actions">
-            <a class="btn-dl" href="/videos/${encodeURIComponent(v.filename)}" download="${name}">⬇ Download</a>
+            <a class="btn-dl" href="${url}" download="${name}" target="_blank">⬇ Download</a>
           </div>
         </div>`;
       grid.appendChild(card);
