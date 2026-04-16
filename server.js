@@ -135,10 +135,13 @@ app.post("/submit-payment", (req, res) => {
 
 app.get("/check-payment", (req, res) => {
   const { phone, tx_ref } = req.query;
-  if (!phone || !tx_ref) return res.status(400).json({ ok: false });
+
+  if (!phone || !tx_ref) {
+    return res.status(400).json({ ok: false });
+  }
 
   db.payments
-    .find({ phone: phone, tx_ref: tx_ref })
+    .find({ phone: phone.trim(), tx_ref: tx_ref.trim() })
     .sort({ createdAt: -1 })
     .exec((err, rows) => {
 
@@ -146,12 +149,12 @@ app.get("/check-payment", (req, res) => {
         return res.json({ ok: false, status: "not_found" });
       }
 
-      const row = rows[0]; // latest record
+      const latest = rows[0];
 
       return res.json({
         ok: true,
-        status: row.status,
-        code: row.code || null
+        status: latest.status,
+        code: latest.code || null
       });
     });
 });
@@ -173,15 +176,15 @@ app.post("/approve-payment/:id", adminAuth, (req, res) => {
     (err) => {
       if (err) return res.status(500).json({ ok: false, message: "Failed" });
 
-      // FORCE FETCH UPDATED RECORD (important fix)
+      // IMPORTANT: verify update actually happened
       db.payments.findOne({ _id: req.params.id }, (err2, updated) => {
         if (err2 || !updated) {
-          return res.status(500).json({ ok: false, message: "Update check failed" });
+          return res.status(500).json({ ok: false, message: "Update failed" });
         }
 
-        console.log("APPROVED CODE GENERATED:", updated.code);
+        console.log("APPROVED:", updated);
 
-        return res.json({
+        res.json({
           ok: true,
           code: updated.code,
           status: updated.status
