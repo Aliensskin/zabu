@@ -16,9 +16,9 @@ app.use(express.static(path.join(__dirname, "public")));
 
 /* ── CLOUDINARY CONFIG ── */
 cloudinary.config({
-  cloud_name: process.env.djog6tfpk,
-  api_key:    process.env.855421729614272,
-  api_secret: process.env.1GYcja3gR-lzkvdCxcX7FGXYhQY,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 /* ── CONSTANTS ── */
